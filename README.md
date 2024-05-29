@@ -1,3 +1,11 @@
 # spellcast-solver
 
-SpellCastの最高点を求めるアプリです。
+SpellCastの盤面における、最高点の単語を求めるデスクトップアプリです。
+
+## Credit
+
+このアプリはテンプレート「Electron React Boilerplate」を用いて作成されました。<br/>
+Git: https://github.com/electron-react-boilerplate/electron-react-boilerplate<br/>
+License: https://github.com/electron-react-boilerplate/electron-react-boilerplate/blob/main/LICENSE<br/>
+<br/>
+Copyright (c) 2015-present Electron React Boilerplate
