@@ -1,4 +1,4 @@
-import { Routes, Route, BrowserRouter, HashRouter } from 'react-router-dom';
+import { Routes, Route, HashRouter } from 'react-router-dom';
 import './App.css';
 import SpellcastSolver from './spellcastSolver';
 import About from './about';

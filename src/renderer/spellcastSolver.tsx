@@ -17,7 +17,6 @@ function SpellcastSolver() {
     const [resultMap, setResultMap] = useState<WordResultMap>(new Map())
     const [result, setResult] = useState<WordResult | null>(null)
     const [selectedIndex, setSelectedIndex] = useState<number | null>(null)
-
     const [numSwap, setNumSwap] = useState(0)
     const [dlIndex, setDlIndex] = useState<number | null>(null)
     const [tlIndex, setTlIndex] = useState<number | null>(null)

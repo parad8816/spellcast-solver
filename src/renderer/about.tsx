@@ -1,7 +1,7 @@
 import { Col, Divider, Image, Row, Typography } from "antd"
 import authorImg from "./author.png"
-import { GithubFilled, GithubOutlined } from "@ant-design/icons"
-const { Text, Link } = Typography
+import { GithubOutlined } from "@ant-design/icons"
+const { Link } = Typography
 
 function About() {
     return (
