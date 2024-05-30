@@ -1,8 +1,9 @@
 import React, { RefObject, useEffect, useRef, useState } from "react";
-import { Button, Col, ConfigProvider, Input, InputRef, Progress, Row, Select, Typography } from "antd";
+import { Button, Col, ConfigProvider, Input, InputRef, Progress, Row, Select, Spin, Typography } from "antd";
 import { WordResult } from "../main/spellcast";
 import { Board as LetterBoard, Index, BoardUtil } from "../main/board";
 import { bestWord } from "../main/spellcast";
+import { useWorker } from "@koale/useworker";
 
 const boardUtil = new BoardUtil(5, 5)
 
@@ -107,6 +108,7 @@ function Board(props: BoardProps) {
     const [dwIndexVisible, setDwIndexVisible] = useState(false)
     const [analyzeReady, setAnalyzeReady] = useState(false)
     const [progress, setProgress] = useState(0)
+    const [analyzing, setAnalyzing] = useState(false)
     const [curRes, setCurRes] = useState<Map<number, WordResult>>(new Map())
     const {setResult, pathToShow} = props
 
@@ -169,11 +171,12 @@ function Board(props: BoardProps) {
         bd.dlIndex = dlIndex
         bd.tlIndex = tlIndex
         bd.dwIndex = dwIndex
-        bestWord(bd, numSwap, setProgress).then(res => {
-            setResult(res)
-            setCurRes(res)
-            setProgress(100)
-        })
+        setAnalyzing(true)
+        const res = await bestWord(bd, numSwap, setProgress, 1000)
+        setResult(res)
+        setCurRes(res)
+        setAnalyzing(false)
+        setProgress(100)
     }
 
     useEffect(() => {
@@ -198,93 +201,116 @@ function Board(props: BoardProps) {
                 )}
             </div>
             <Row justify={"space-evenly"}>
-                <Col>
-                    <div className="letter-option-row">
-                        <Typography className="letter-option-name">DL:</Typography>
-                        <Button 
-                            type="primary"
-                            className="letter-option-button"
-                            tabIndex={-1}
-                            onClick={handleSetDlIndex}
-                        >
-                            Set
-                        </Button>
-                        <Button 
-                            className="letter-option-button"
-                            tabIndex={-1}
-                            onClick={handleResetDlIndex}
-                        >
-                            Reset
-                        </Button>
-                    </div>
-                    <div className="letter-option-row">
-                        <Typography className="letter-option-name">TL:</Typography>
-                        <Button 
-                            type="primary"
-                            className="letter-option-button"
-                            tabIndex={-1}
-                            onClick={handleSetTlIndex}
-                        >
-                            Set
-                        </Button>
-                        <Button 
-                            className="letter-option-button"
-                            tabIndex={-1}
-                            onClick={handleResetTlIndex}
-                        >
-                            Reset
-                        </Button>
-                    </div>
-                    <div className="letter-option-row">
-                        <Typography className="letter-option-name">DW:</Typography>
-                        <Button 
-                            type="primary"
-                            className="letter-option-button"
-                            tabIndex={-1}
-                            onClick={handleSetDwIndex}
-                        >
-                            Set
-                        </Button>
-                        <Button 
-                            className="letter-option-button"
-                            tabIndex={-1}
-                            onClick={handleResetDwIndex}
-                        >
-                            Reset
-                        </Button>
-                    </div>
+                <Col style={{ width: 220 }}>
+                    <Row align={"middle"} justify={"center"} className="letter-option-row">
+                        <Col flex={"60px"}>
+                            <Typography className="letter-option-name">DL:</Typography>
+                        </Col>
+                        <Col>
+                            <Button 
+                                type="primary"
+                                className="letter-option-button"
+                                tabIndex={-1}
+                                onClick={handleSetDlIndex}
+                            >
+                                Set
+                            </Button>
+                        </Col>
+                        <Col>
+                            <Button 
+                                className="letter-option-button"
+                                tabIndex={-1}
+                                onClick={handleResetDlIndex}
+                            >
+                                Reset
+                            </Button>
+                        </Col>
+                    </Row>
+                    <Row align={"middle"} justify={"center"} className="letter-option-row">
+                        <Col flex={"60px"}>
+                            <Typography className="letter-option-name">TL:</Typography>
+                        </Col>
+                        <Col>
+                            <Button 
+                                type="primary"
+                                className="letter-option-button"
+                                tabIndex={-1}
+                                onClick={handleSetTlIndex}
+                            >
+                                Set
+                            </Button>
+                        </Col>
+                        <Col>
+                            <Button 
+                                className="letter-option-button"
+                                tabIndex={-1}
+                                onClick={handleResetTlIndex}
+                            >
+                                Reset
+                            </Button>
+                        </Col>
+                    </Row>
+                    <Row align={"middle"} justify={"center"} className="letter-option-row">
+                        <Col flex={"60px"}>
+                            <Typography className="letter-option-name">DW:</Typography>
+                        </Col>
+                        <Col>
+                            <Button 
+                                type="primary"
+                                className="letter-option-button"
+                                tabIndex={-1}
+                                onClick={handleSetDwIndex}
+                            >
+                                Set
+                            </Button>
+                        </Col>
+                        <Col>
+                            <Button 
+                                className="letter-option-button"
+                                tabIndex={-1}
+                                onClick={handleResetDwIndex}
+                            >
+                                Reset
+                            </Button>
+                        </Col>
+                    </Row>
                 </Col>
-                <Col>
-                    <div className="letter-option-row">
-                        <Typography className="letter-option-name">Swaps:</Typography>
-                        <Select 
-                            value={numSwap}
-                            tabIndex={-1}
-                            options={[
-                                { value: 0, label: "0" },
-                                { value: 1, label: "1" },
-                                { value: 2, label: "2" },
-                                { value: 3, label: "3" },
-                            ]}
-                            onChange={setNumSwap}
-                        />
-                    </div>
+                <Col style={{ width: 140 }}>
+                    <Row className="letter-option-row">
+                        <Col flex={"72px"}>
+                            <Typography className="letter-option-name">Swaps:</Typography>
+                        </Col>
+                        <Col>
+                            <Select 
+                                value={numSwap}
+                                tabIndex={-1}
+                                options={[
+                                    { value: 0, label: "0" },
+                                    { value: 1, label: "1" },
+                                    { value: 2, label: "2" },
+                                    { value: 3, label: "3" },
+                                ]}
+                                onChange={setNumSwap}
+                            />
+                        </Col>
+                    </Row>
                 </Col>
             </Row>
             <div className="analyze-container">
                 <Button 
                     type="primary" 
-                    style={{ marginRight: 20 }}
+                    style={{ width: 120 }}
                     tabIndex={-1}
                     disabled={!analyzeReady}
                     onClick={analyze}
                 >
                     💡Analyze!
                 </Button>
-                <Progress 
-                    style={{ width: 200 }} 
-                    percent={progress}
-                    trailColor={"#bbbbbb"}
+                <Spin 
+                    tip={`${progress}%`} 
+                    spinning={analyzing}
+                    size="large"
+                    fullscreen 
                 />
             </div>
             <Typography style={{ marginTop: 10 }}>

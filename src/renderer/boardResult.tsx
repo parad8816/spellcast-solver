@@ -16,6 +16,7 @@ function BoardResult(props: BoardResultProps) {
                 <div className="text-name-container">
                     <Button 
                         className="text-name-button"
+                        disabled={result.get(0) === undefined}
                         onClick={() => reflectPath(0)}
                     >
                         ◀️
@@ -28,6 +29,7 @@ function BoardResult(props: BoardResultProps) {
                 <div className="text-name-container">
                     <Button 
                         className="text-name-button"
+                        disabled={result.get(1) === undefined}
                         onClick={() => reflectPath(1)}
                     >
                         ◀️
@@ -40,6 +42,7 @@ function BoardResult(props: BoardResultProps) {
                 <div className="text-name-container">
                     <Button
                         className="text-name-button"
+                        disabled={result.get(2) === undefined}
                         onClick={() => reflectPath(2)}
                     >
                         ◀️
@@ -52,6 +55,7 @@ function BoardResult(props: BoardResultProps) {
                 <div className="text-name-container">
                     <Button 
                         className="text-name-button"
+                        disabled={result.get(3) === undefined}
                         onClick={() => reflectPath(3)}
                     >
                         ◀️
@@ -60,14 +64,12 @@ function BoardResult(props: BoardResultProps) {
                 </div>
                 <Typography className="text-word">{result.get(3)?.toString() ?? "---"}</Typography>
             </div>
-            <div className="word-result-container">
-                <Button 
-                    style={{ width: 150 }}
-                    onClick={() => reflectPath(null)}
-                >
-                    🚫Disable Path
-                </Button>
-            </div>
+            <Button 
+                style={{ width: 150 }}
+                onClick={() => reflectPath(null)}
+            >
+                🚫Disable Path
+            </Button>
         </div>
     )
 }

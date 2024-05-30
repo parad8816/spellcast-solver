@@ -78,9 +78,6 @@ a:hover {
 }
 
 #board .letter-option-row {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
   padding: 5px;
 }
 
@@ -98,6 +95,7 @@ a:hover {
   display: flex;
   flex-direction: row;
   align-items: center;
+  justify-content: center;
   margin: 20px 0 0 0;
 }
 

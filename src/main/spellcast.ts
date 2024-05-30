@@ -71,17 +71,16 @@ class WordResult {
 async function bestWord(
     board: Board, 
     numSkippable: number,
-    setProgress: (value: number) => void
+    setProgress: (value: number) => void,
+    updateStep: number
 ): Promise<Map<number, WordResult>> {
-    console.log(board)
+    var sum = 0
     const size = words.length
     var curMap = new Map<number, WordSearchResult>()
     for (var i = 0; i < size; i++) {
         const w = words[i]
-        var outS = w
         const paths = findPaths(board, w, numSkippable)
         if (paths.length > 0) {
-            outS += " ... <found>"
             for (const p of paths) {
                 const pt = wordPoint(board, w, p.path)
                 const old = curMap.get(p.numSkipped)
@@ -96,8 +95,11 @@ async function bestWord(
                 }
             }
         }
-        //console.log(outS)
-        setProgress(i / size)
+        if (sum % updateStep === 0) {
+            await new Promise(r => setTimeout(r, 0))
+            setProgress(Math.floor(100 * sum / size))
+        }
+        sum++
     }
     var mp = new Map<number, WordResult>()
     curMap.forEach((v, k) => mp.set(k, new WordResult(v.word, v.point, v.numSkipped, v.path)))

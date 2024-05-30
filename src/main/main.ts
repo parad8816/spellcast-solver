@@ -40,7 +40,7 @@ const isDebug =
   process.env.NODE_ENV === 'development' || process.env.DEBUG_PROD === 'true';
 
 if (isDebug) {
-  require('electron-debug')();
+  require('electron-debug')({ showDevTools: false });
 }
 
 const installExtensions = async () => {
@@ -71,10 +71,10 @@ const createWindow = async () => {
 
   mainWindow = new BrowserWindow({
     show: false,
-    width: 768,
-    height: 546,
-    resizable: false,
-    maximizable: false,
+    width: 770,
+    height: 560,
+    resizable: true,
+    maximizable: true,
     fullscreenable: false,
     icon: getAssetPath('icon.png'),
     webPreferences: {
