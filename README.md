@@ -2,7 +2,9 @@
 
 [SpellCast](https://discord.fandom.com/wiki/SpellCast) (Discord activity) の指定された盤面における、最高点の単語を求めるデスクトップアプリです。
 
-<img src="https://github.com/parad8816/spellcast-solver/blob/master/spellcast-solver.png" alt="Picture" width="40%">
+## Overview
+
+<img src="https://github.com/parad8816/spellcast-solver/blob/master/spellcast-solver.png" alt="Picture" width="50%">
 
 ## How to Use
 
