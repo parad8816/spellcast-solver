@@ -77,6 +77,18 @@ a:hover {
   position: absolute;
 }
 
+#board .letter-replacer {
+  width: 16px;
+  height: 16px;
+  font-size: 10px;
+  font-weight: bold;
+  color: white;
+  text-align: center;
+  background-color: rgb(180, 180, 180);
+  border-radius: 8px;
+  position: absolute;
+}
+
 #board .letter-option-row {
   padding: 5px;
 }

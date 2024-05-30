@@ -38,11 +38,13 @@ type WordSearchResult = {
     point: number,
     numSkipped: number,
     path: number[]
+    skipped: Map<number, string>
 }
 
 type PathSearchResult = {
     numSkipped: number,
     path: number[]
+    skipped: Map<number, string>
 }
 
 class WordResult {
@@ -50,17 +52,20 @@ class WordResult {
     point: number
     numSwap: number
     path: number[]
+    swapped: Map<number, string>
 
     constructor(
         word: string, 
         point: number, 
         numSwap: number,
-        path: number[]
+        path: number[],
+        swapped: Map<number, string>
     ) {
         this.word = word
         this.point = point
         this.numSwap = numSwap
         this.path = path
+        this.swapped = swapped
     }
 
     toString(): string {
@@ -68,12 +73,14 @@ class WordResult {
     }
 }
 
+type WordResultMap = Map<number, WordResult>
+
 async function bestWord(
     board: Board, 
     numSkippable: number,
     setProgress: (value: number) => void,
     updateStep: number
-): Promise<Map<number, WordResult>> {
+): Promise<WordResultMap> {
     var sum = 0
     const size = words.length
     var curMap = new Map<number, WordSearchResult>()
@@ -89,7 +96,8 @@ async function bestWord(
                         word: w,
                         point: pt,
                         numSkipped: p.numSkipped,
-                        path: p.path
+                        path: p.path,
+                        skipped: p.skipped
                     }
                     curMap.set(p.numSkipped, cur)
                 }
@@ -102,7 +110,13 @@ async function bestWord(
         sum++
     }
     var mp = new Map<number, WordResult>()
-    curMap.forEach((v, k) => mp.set(k, new WordResult(v.word, v.point, v.numSkipped, v.path)))
+    curMap.forEach((v, k) => mp.set(k, new WordResult(
+        v.word, 
+        v.point, 
+        v.numSkipped, 
+        v.path, 
+        v.skipped
+    )))
     return mp
 }
 
@@ -143,7 +157,7 @@ function findPathsFrom(
     word: string, 
     numSkippable: number
 ): PathSearchResult[] {
-    return findPathsFromRec(board, start, word, numSkippable, 0, [])
+    return findPathsFromRec(board, start, word, numSkippable, 0, [], new Map())
 }
 
 function findPathsFromRec(
@@ -152,7 +166,8 @@ function findPathsFromRec(
     remainingStr: string, 
     numSkippable: number, 
     numSkipped: number, 
-    path: number[]
+    path: number[],
+    skipped: Map<number, string>
 ): PathSearchResult[] {
     const startOrd = board.util.indexToOrder(start)
 
@@ -168,8 +183,11 @@ function findPathsFromRec(
 
     var numSkippable1 = numSkippable
     var numSkipped1 = numSkipped
+    var skipped1 = new Map(skipped)
     if (bls.get(startOrd) != l) {
         numSkippable1--; numSkipped1++;
+        skipped1.set(startOrd, l)
+        skipped1 = new Map(skipped1)
     }
 
     // スキップ可能な回数を超過した
@@ -183,7 +201,8 @@ function findPathsFromRec(
     if (rem.length == 0) {
         return [{
             numSkipped: numSkipped1,
-            path: path1
+            path: path1,
+            skipped: skipped1
         }]
     }
 
@@ -192,35 +211,35 @@ function findPathsFromRec(
 
     // 8方向に移って調べる
     if (row > 0) {
-        tmp = findPathsFromRec(board, [row - 1, col], rem, numSkippable1, numSkipped1, path1)
+        tmp = findPathsFromRec(board, [row - 1, col], rem, numSkippable1, numSkipped1, path1, skipped1)
         arr = [...arr, ...tmp]
         if (col > 0) {
-            tmp = findPathsFromRec(board, [row - 1, col - 1], rem, numSkippable1, numSkipped1, path1)
+            tmp = findPathsFromRec(board, [row - 1, col - 1], rem, numSkippable1, numSkipped1, path1, skipped1)
             arr = [...arr, ...tmp]
         }
         if (col < board.colCount - 1) {
-            tmp = findPathsFromRec(board, [row - 1, col + 1], rem, numSkippable1, numSkipped1, path1)
+            tmp = findPathsFromRec(board, [row - 1, col + 1], rem, numSkippable1, numSkipped1, path1, skipped1)
             arr = [...arr, ...tmp]
         }
     }
     if (row < board.rowCount - 1) {
-        tmp = findPathsFromRec(board, [row + 1, col], rem, numSkippable1, numSkipped1, path1)
+        tmp = findPathsFromRec(board, [row + 1, col], rem, numSkippable1, numSkipped1, path1, skipped1)
         arr = [...arr, ...tmp]
         if (col > 0) {
-            tmp = findPathsFromRec(board, [row + 1, col - 1], rem, numSkippable1, numSkipped1, path1)
+            tmp = findPathsFromRec(board, [row + 1, col - 1], rem, numSkippable1, numSkipped1, path1, skipped1)
             arr = [...arr, ...tmp]
         }
         if (col < board.colCount - 1) {
-            tmp = findPathsFromRec(board, [row + 1, col + 1], rem, numSkippable1, numSkipped1, path1)
+            tmp = findPathsFromRec(board, [row + 1, col + 1], rem, numSkippable1, numSkipped1, path1, skipped1)
             arr = [...arr, ...tmp]
         }
     }
     if (col > 0) {
-        tmp = findPathsFromRec(board, [row, col - 1], rem, numSkippable1, numSkipped1, path1)
+        tmp = findPathsFromRec(board, [row, col - 1], rem, numSkippable1, numSkipped1, path1, skipped1)
         arr = [...arr, ...tmp]
     }
     if (col < board.colCount - 1) {
-        tmp = findPathsFromRec(board, [row, col + 1], rem, numSkippable1, numSkipped1, path1)
+        tmp = findPathsFromRec(board, [row, col + 1], rem, numSkippable1, numSkipped1, path1, skipped1)
         arr = [...arr, ...tmp]
     }
     return arr
@@ -228,5 +247,6 @@ function findPathsFromRec(
 
 export {
     WordResult,
+    WordResultMap,
     bestWord
 }

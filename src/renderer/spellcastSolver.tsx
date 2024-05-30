@@ -1,95 +1,10 @@
 import React, { RefObject, useEffect, useRef, useState } from "react";
-import { Button, Col, ConfigProvider, Input, InputRef, Progress, Row, Select, Spin, Typography } from "antd";
-import { WordResult } from "../main/spellcast";
-import { Board as LetterBoard, Index, BoardUtil } from "../main/board";
-import { bestWord } from "../main/spellcast";
-import { useWorker } from "@koale/useworker";
+import { Button, Col, Divider, Input, InputRef, Row, Select, Spin, Typography } from "antd";
+import { WordResult, WordResultMap, bestWord } from "../main/spellcast";
+import { BoardUtil } from "../main/board";
 
-const boardUtil = new BoardUtil(5, 5)
-
-interface LetterInputProps {
-    index: number
-    onChange: (value: string) => void
-    refs: Map<number, RefObject<InputRef>>
-    setSelectedIndex: (value: number | null) => void
-    result: Map<number, WordResult>
-    pathToShow: number | null
-}
-
-function LetterInput(props: LetterInputProps) {
-    const {index, onChange, refs, setSelectedIndex, result, pathToShow} = props
-    const [realVal, setRealVal] = useState("")
-
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const inputValue = e.target.value
-        const reg = /^[A-Za-z]$/
-        if (reg.test(inputValue) || inputValue === '') {
-            setRealVal(inputValue.toUpperCase())
-            onChange(inputValue.toLowerCase())
-            if (inputValue !== '') {
-                const next = refs.get(index + 1)
-                if (next != undefined) {
-                    next.current?.focus()
-                }
-            }
-        }
-    }
-
-    const handleFocus = (e: React.FocusEvent<HTMLInputElement>) => {
-        e.target.select()
-        setSelectedIndex(index)
-    }
-
-    return (
-        <Input
-            style={pathToShow != null && result.get(pathToShow)?.path.includes(index) ? { background: "#FFF499" } : {}}
-            className="letter-input"
-            maxLength={1}
-            tabIndex={index}
-            onChange={handleChange}
-            onFocus={handleFocus}
-            value={realVal}
-            ref={refs.get(index)}
-        />
-    )
-}
-
-interface LetterInputRowProps {
-    row: number
-    onChange: (value: string, index: number) => void
-    refs: Map<number, RefObject<InputRef>>
-    setSelectedIndex: (value: number | null) => void
-    result: Map<number, WordResult>
-    pathToShow: number | null
-}
-
-function LetterInputRow(props: LetterInputRowProps) {
-    const {row, onChange, refs, setSelectedIndex, result, pathToShow} = props
-    return (
-        <div className="letter-input-row">
-            {[...new Array(5).keys()].map(
-                c => {
-                    const ord = boardUtil.indexToOrder([row, c])
-                    return <LetterInput 
-                        index={ord} 
-                        onChange={s => onChange(s, ord)} 
-                        refs={refs}
-                        setSelectedIndex={setSelectedIndex}
-                        result={result}
-                        pathToShow={pathToShow}
-                    />
-                })
-            }
-        </div>
-    )
-}
-
-interface BoardProps {
-    setResult: (result: Map<number, WordResult>) => void
-    pathToShow: number | null
-}
-
-function Board(props: BoardProps) {
+function SpellcastSolver() {
+    const boardUtil = new BoardUtil(5, 5)
     const initMap: Map<number, string> = new Map()
     const refMap: Map<number, RefObject<InputRef>> = new Map()
     for (var idx of boardUtil.indices()) {
@@ -97,9 +12,13 @@ function Board(props: BoardProps) {
         initMap.set(ord, "")
         refMap.set(ord, useRef<InputRef>(null))
     }
+
     const [values, setValues] = useState(new Map(initMap))
-    const [numSwap, setNumSwap] = useState(0)
+    const [resultMap, setResultMap] = useState<WordResultMap>(new Map())
+    const [result, setResult] = useState<WordResult | null>(null)
     const [selectedIndex, setSelectedIndex] = useState<number | null>(null)
+
+    const [numSwap, setNumSwap] = useState(0)
     const [dlIndex, setDlIndex] = useState<number | null>(null)
     const [tlIndex, setTlIndex] = useState<number | null>(null)
     const [dwIndex, setDwIndex] = useState<number | null>(null)
@@ -109,15 +28,6 @@ function Board(props: BoardProps) {
     const [analyzeReady, setAnalyzeReady] = useState(false)
     const [progress, setProgress] = useState(0)
     const [analyzing, setAnalyzing] = useState(false)
-    const [curRes, setCurRes] = useState<Map<number, WordResult>>(new Map())
-    const {setResult, pathToShow} = props
-
-    const handleChange = (value: string, index: number) => {
-        setValues(v => {
-            v.set(index, value)
-            return new Map(v)
-        })
-    }
 
     const keepFocus = () => {
         if (selectedIndex != null) {
@@ -172,33 +82,88 @@ function Board(props: BoardProps) {
         bd.tlIndex = tlIndex
         bd.dwIndex = dwIndex
         setAnalyzing(true)
-        const res = await bestWord(bd, numSwap, setProgress, 1000)
-        setResult(res)
-        setCurRes(res)
-        setAnalyzing(false)
+        const resMap = await bestWord(bd, numSwap, setProgress, 1000)
+        setResultMap(resMap)
         setProgress(100)
+        setAnalyzing(false)
     }
 
     useEffect(() => {
         setAnalyzeReady(boardUtil.isFulfilled(values))
     }, [values])
 
-    return (
+    const handleChangeBoardLetter = (value: string, index: number) => {
+        setValues(v => {
+            v.set(index, value)
+            return new Map(v)
+        })
+    }
+    
+    const letterInput = (index: number) => {
+        const [realVal, setRealVal] = useState("")
+    
+        const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+            const inputValue = e.target.value
+            const reg = /^[A-Za-z]$/
+            if (reg.test(inputValue) || inputValue === '') {
+                setRealVal(inputValue.toUpperCase())
+                handleChangeBoardLetter(inputValue.toLowerCase(), index)
+                if (inputValue !== '') {
+                    const next = refMap.get(index + 1)
+                    if (next !== undefined) {
+                        next.current?.focus()
+                    }
+                }
+            }
+        }
+    
+        const handleFocus = (e: React.FocusEvent<HTMLInputElement>) => {
+            e.target.select()
+            setSelectedIndex(index)
+        }
+    
+        return (
+            <span style={{ position: "relative" }}>
+                <Input
+                    style={result != null && result.path.includes(index) ? { background: "#FFF499" } : {}}
+                    className="letter-input"
+                    maxLength={1}
+                    tabIndex={index}
+                    onChange={handleChange}
+                    onFocus={handleFocus}
+                    value={realVal}
+                    ref={refMap.get(index)}
+                />
+                {result != null && result.swapped.has(index) ? <span 
+                    className="letter-replacer" 
+                    style={{ top: -13, left: 35, zIndex: 99 }}
+                >
+                    {result.swapped.get(index)?.toUpperCase()}
+                </span> : null}
+            </span>
+        )
+    }
+    
+    const letterInputRow = (row: number) => {
+        return (
+            <div className="letter-input-row">
+                {[...new Array(5).keys()].map(
+                    c => {
+                        const ord = boardUtil.indexToOrder([row, c])
+                        return letterInput(ord)
+                    })
+                }
+            </div>
+        )
+    }
+    
+    const board = (
         <div id="board">
             <div className="board-wrapper">
                 {dlIndexVisible ? <span className="marker" style={{ ...markerPosition(dlIndex), zIndex: 100, backgroundColor: "#8080E0" }}>DL</span> : null}
                 {tlIndexVisible ? <span className="marker" style={{ ...markerPosition(tlIndex), zIndex: 101, backgroundColor: "#F07070" }}>TL</span> : null}
                 {dwIndexVisible ? <span className="marker" style={{ ...markerPosition(dwIndex), zIndex: 102, backgroundColor: "#D070D0" }}>DW</span> : null}
-                {[...new Array(5).keys()].map(
-                    r => <LetterInputRow 
-                        row={r}
-                        onChange={handleChange}
-                        refs={refMap}
-                        setSelectedIndex={setSelectedIndex}
-                        result={curRes}
-                        pathToShow={pathToShow}
-                    />
-                )}
+                {[...new Array(5).keys()].map(r => letterInputRow(r))}
             </div>
             <Row justify={"space-evenly"}>
                 <Col style={{ width: 220 }}>
@@ -318,6 +283,91 @@ function Board(props: BoardProps) {
             </Typography>
         </div>
     )
+
+    const setResultOfSwap = (numSwap: number | null) => {
+        if (numSwap != null) {
+            const res = resultMap.get(numSwap) ?? null
+            setResult(res)
+        } else {
+            setResult(null)
+        }
+    }
+    
+    const boardResult = (
+        <div id="board-result">
+            <div className="word-result-container">
+                <div className="text-name-container">
+                    <Button 
+                        className="text-name-button"
+                        tabIndex={-1}
+                        disabled={resultMap.get(0) === undefined}
+                        onClick={() => setResultOfSwap(0)}
+                    >
+                        ◀️
+                    </Button>
+                    <Typography className="text-name">No Swap:</Typography>
+                </div>
+                <Typography className="text-word">{resultMap.get(0)?.toString() ?? "---"}</Typography>
+            </div>
+            <div className="word-result-container">
+                <div className="text-name-container">
+                    <Button 
+                        className="text-name-button"
+                        tabIndex={-1}
+                        disabled={resultMap.get(1) === undefined}
+                        onClick={() => setResultOfSwap(1)}
+                    >
+                        ◀️
+                    </Button>
+                    <Typography className="text-name">1 Swap:</Typography>
+                </div>
+                <Typography className="text-word">{resultMap.get(1)?.toString() ?? "---"}</Typography>
+            </div>
+            <div className="word-result-container">
+                <div className="text-name-container">
+                    <Button
+                        className="text-name-button"
+                        tabIndex={-1}
+                        disabled={resultMap.get(2) === undefined}
+                        onClick={() => setResultOfSwap(2)}
+                    >
+                        ◀️
+                    </Button>
+                    <Typography className="text-name">2 Swaps:</Typography>
+                </div>
+                <Typography className="text-word">{resultMap.get(2)?.toString() ?? "---"}</Typography>
+            </div>
+            <div className="word-result-container">
+                <div className="text-name-container">
+                    <Button 
+                        className="text-name-button"
+                        tabIndex={-1}
+                        disabled={resultMap.get(3) === undefined}
+                        onClick={() => setResultOfSwap(3)}
+                    >
+                        ◀️
+                    </Button>
+                    <Typography className="text-name">3 Swaps:</Typography>
+                </div>
+                <Typography className="text-word">{resultMap.get(3)?.toString() ?? "---"}</Typography>
+            </div>
+            <Button 
+                style={{ width: 150 }}
+                tabIndex={-1}
+                onClick={() => setResultOfSwap(null)}
+            >
+                🚫Disable Path
+            </Button>
+        </div>
+    )
+
+    return (
+        <Row id='solver'>
+            <Col flex={2}>{board}</Col>
+            <Divider type='vertical' className='divider' />
+            <Col flex={2}>{boardResult}</Col>
+        </Row>
+    )
 }
 
-export default Board
+export default SpellcastSolver
