@@ -5,6 +5,7 @@ import {
   BrowserWindow,
   MenuItemConstructorOptions,
 } from 'electron';
+import { applyBasicSettingsToWindow, resolveHtmlPath, setMainIconToWindow } from './util';
 
 interface DarwinMenuItemConstructorOptions extends MenuItemConstructorOptions {
   selector?: string;
@@ -121,6 +122,9 @@ export default class MenuBuilder {
       submenu: [
         {
           label: 'About This App',
+          click: () => {
+            this.showAboutModal();
+          }
         },
         {
           label: 'GitHub',
@@ -177,6 +181,9 @@ export default class MenuBuilder {
       submenu: [
         {
           label: 'About This App',
+          click: () => {
+            this.showAboutModal()
+          }
         },
         {
           label: 'GitHub',
@@ -193,5 +200,25 @@ export default class MenuBuilder {
         : [menuFile, menuHelp];
 
     return templateDefault;
+  }
+
+  showAboutModal() {
+    let window: BrowserWindow | null = null
+    window = new BrowserWindow({
+      show: false,
+      width: 560,
+      height: 500,
+      resizable: false,
+      maximizable: false,
+      minimizable: false,
+      fullscreenable: false,
+      modal: true,
+      title: "About This App",
+      parent: this.mainWindow
+    })
+    window.menuBarVisible = false
+    window.loadURL(resolveHtmlPath("index.html", "about"))
+    setMainIconToWindow(window)
+    applyBasicSettingsToWindow(window)
   }
 }

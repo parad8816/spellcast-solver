@@ -13,7 +13,7 @@ import { app, BrowserWindow, shell, ipcMain } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import MenuBuilder from './menu';
-import { resolveHtmlPath } from './util';
+import { applyBasicSettingsToWindow, resolveHtmlPath, setMainIconToWindow } from './util';
 
 class AppUpdater {
   constructor() {
@@ -61,14 +61,6 @@ const createWindow = async () => {
     await installExtensions();
   }
 
-  const RESOURCES_PATH = app.isPackaged
-    ? path.join(process.resourcesPath, 'assets')
-    : path.join(__dirname, '../../assets');
-
-  const getAssetPath = (...paths: string[]): string => {
-    return path.join(RESOURCES_PATH, ...paths);
-  };
-
   mainWindow = new BrowserWindow({
     show: false,
     width: 770,
@@ -76,7 +68,7 @@ const createWindow = async () => {
     resizable: true,
     maximizable: true,
     fullscreenable: false,
-    icon: getAssetPath('icon.png'),
+    title: "SpellCast Solver",
     webPreferences: {
       preload: app.isPackaged
         ? path.join(__dirname, 'preload.js')
@@ -84,18 +76,9 @@ const createWindow = async () => {
     },
   });
 
-  mainWindow.loadURL(resolveHtmlPath('index.html'));
-
-  mainWindow.on('ready-to-show', () => {
-    if (!mainWindow) {
-      throw new Error('"mainWindow" is not defined');
-    }
-    if (process.env.START_MINIMIZED) {
-      mainWindow.minimize();
-    } else {
-      mainWindow.show();
-    }
-  });
+  mainWindow.loadURL(resolveHtmlPath("index.html", ""));
+  setMainIconToWindow(mainWindow)
+  applyBasicSettingsToWindow(mainWindow)
 
   mainWindow.on('closed', () => {
     mainWindow = null;
@@ -103,12 +86,6 @@ const createWindow = async () => {
 
   const menuBuilder = new MenuBuilder(mainWindow);
   menuBuilder.buildMenu();
-
-  // Open urls in the user's browser
-  mainWindow.webContents.setWindowOpenHandler((edata) => {
-    shell.openExternal(edata.url);
-    return { action: 'deny' };
-  });
 
   // Remove this if your app does not use auto updates
   // eslint-disable-next-line

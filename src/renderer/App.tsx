@@ -1,13 +1,15 @@
-import { MemoryRouter as Router, Routes, Route } from 'react-router-dom';
+import { Routes, Route, BrowserRouter, HashRouter } from 'react-router-dom';
 import './App.css';
 import SpellcastSolver from './spellcastSolver';
+import About from './about';
 
 export default function App() {
     return (
-        <Router>
+        <HashRouter>
             <Routes>
                 <Route path="/" element={<SpellcastSolver />} />
+                <Route path="/about" element={<About />} />
             </Routes>
-        </Router>
+        </HashRouter>
     );
 }

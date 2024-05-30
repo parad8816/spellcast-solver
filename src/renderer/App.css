@@ -6,7 +6,7 @@ body {
   position: relative;
   color: white;
   height: 100vh;
-  background: rgb(216, 216, 216);
+  background: rgb(225, 225, 225);
   font-family: sans-serif;
   overflow-y: hidden;
   display: block;
@@ -150,6 +150,30 @@ a:hover {
   font-weight: bold;
   padding: 0 0 0 26px;
   width: 160px;
+}
+
+#about {
+  padding: 5px 10px;
+}
+
+#about .title {
+  font-size: 24px;
+  font-weight: bold;
+}
+
+#about .info {
+  font-size: 11px;
+}
+
+#about .text {
+  font-size: 13px;
+  margin: 0;
+}
+
+#about .author-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 #solver {
