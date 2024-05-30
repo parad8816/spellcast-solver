@@ -84,22 +84,6 @@ export default class MenuBuilder {
         },
       ],
     };
-    const subMenuEdit: DarwinMenuItemConstructorOptions = {
-      label: 'Edit',
-      submenu: [
-        { label: 'Undo', accelerator: 'Command+Z', selector: 'undo:' },
-        { label: 'Redo', accelerator: 'Shift+Command+Z', selector: 'redo:' },
-        { type: 'separator' },
-        { label: 'Cut', accelerator: 'Command+X', selector: 'cut:' },
-        { label: 'Copy', accelerator: 'Command+C', selector: 'copy:' },
-        { label: 'Paste', accelerator: 'Command+V', selector: 'paste:' },
-        {
-          label: 'Select All',
-          accelerator: 'Command+A',
-          selector: 'selectAll:',
-        },
-      ],
-    };
     const subMenuViewDev: MenuItemConstructorOptions = {
       label: 'View',
       submenu: [
@@ -111,29 +95,10 @@ export default class MenuBuilder {
           },
         },
         {
-          label: 'Toggle Full Screen',
-          accelerator: 'Ctrl+Command+F',
-          click: () => {
-            this.mainWindow.setFullScreen(!this.mainWindow.isFullScreen());
-          },
-        },
-        {
           label: 'Toggle Developer Tools',
           accelerator: 'Alt+Command+I',
           click: () => {
             this.mainWindow.webContents.toggleDevTools();
-          },
-        },
-      ],
-    };
-    const subMenuViewProd: MenuItemConstructorOptions = {
-      label: 'View',
-      submenu: [
-        {
-          label: 'Toggle Full Screen',
-          accelerator: 'Ctrl+Command+F',
-          click: () => {
-            this.mainWindow.setFullScreen(!this.mainWindow.isFullScreen());
           },
         },
       ],
@@ -155,93 +120,77 @@ export default class MenuBuilder {
       label: 'Help',
       submenu: [
         {
-          label: 'Learn More',
-          click() {
-            shell.openExternal('https://electronjs.org');
-          },
+          label: 'About This App',
         },
         {
-          label: 'Documentation',
+          label: 'GitHub',
           click() {
-            shell.openExternal(
-              'https://github.com/electron/electron/tree/main/docs#readme',
-            );
-          },
-        },
-        {
-          label: 'Community Discussions',
-          click() {
-            shell.openExternal('https://www.electronjs.org/community');
-          },
-        },
-        {
-          label: 'Search Issues',
-          click() {
-            shell.openExternal('https://github.com/electron/electron/issues');
+            shell.openExternal('https://github.com/parad8816/spellcast-solver');
           },
         },
       ],
     };
 
-    const subMenuView =
+    const templateDarwin = 
       process.env.NODE_ENV === 'development' ||
       process.env.DEBUG_PROD === 'true'
-        ? subMenuViewDev
-        : subMenuViewProd;
+        ? [subMenuAbout, subMenuViewDev, subMenuWindow, subMenuHelp]
+        : [subMenuAbout, subMenuWindow, subMenuHelp];
 
-    return [subMenuAbout, subMenuEdit, subMenuView, subMenuWindow, subMenuHelp];
+    return templateDarwin;
   }
 
   buildDefaultTemplate() {
-    const templateDefault = [
-      {
-        label: '&File',
-        submenu: [
-          {
-            label: '&Exit',
-            accelerator: 'Alt+F4',
-            click: () => {
-              this.mainWindow.close();
-            },
-          }
-        ],
-      },
+    const menuFile = {
+      label: '&File',
+      submenu: [
+        {
+          label: '&Exit',
+          accelerator: 'Alt+F4',
+          click: () => {
+            this.mainWindow.close();
+          },
+        }
+      ],
+    }
+    const menuViewDev = {
+      label: '&View',
+      submenu: [
+        {
+          label: '&Reload',
+          accelerator: 'Ctrl+R',
+          click: () => {
+            this.mainWindow.webContents.reload();
+          },
+        },
+        {
+          label: 'Toggle &Developer Tools',
+          accelerator: 'Alt+Ctrl+I',
+          click: () => {
+            this.mainWindow.webContents.toggleDevTools();
+          },
+        },
+      ]
+    }
+    const menuHelp = {
+      label: 'Help',
+      submenu: [
+        {
+          label: 'About This App',
+        },
+        {
+          label: 'GitHub',
+          click() {
+            shell.openExternal('https://github.com/parad8816/spellcast-solver');
+          },
+        },
+      ],
+    }
+    const templateDefault = 
       process.env.NODE_ENV === 'development' ||
       process.env.DEBUG_PROD === 'true'
-      ? {
-        label: '&View',
-        submenu: [
-          {
-            label: '&Reload',
-            accelerator: 'Ctrl+R',
-            click: () => {
-              this.mainWindow.webContents.reload();
-            },
-          },
-          {
-            label: 'Toggle &Developer Tools',
-            accelerator: 'Alt+Ctrl+I',
-            click: () => {
-              this.mainWindow.webContents.toggleDevTools();
-            },
-          },
-        ]
-      } : {},
-      {
-        label: 'Help',
-        submenu: [
-          {
-            label: 'About This App',
-          },
-          {
-            label: 'GitHub',
-            click() {
-              shell.openExternal('https://github.com/parad8816/spellcast-solver');
-            },
-          },
-        ],
-      },
-    ];
+        ? [menuFile, menuViewDev, menuHelp]
+        : [menuFile, menuHelp];
 
     return templateDefault;
   }
