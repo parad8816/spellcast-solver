@@ -17,7 +17,7 @@ function About() {
                     <GithubOutlined />
                 </Link>
             </Typography>
-            <Typography className="info">Version 0.0.0</Typography>
+            <Typography className="info">Version 1.0.0</Typography>
             <Typography className="info">by Tonal1ty</Typography>
             <Row align={"stretch"} justify={"space-between"} style={{ marginTop: 16 }}>
                 <Col flex={"320px"}>
