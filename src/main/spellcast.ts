@@ -1,5 +1,5 @@
 import { Board, Index } from "./board"
-import words from "./spellcast_words.json"
+import words from "./words.json"
 
 const letterPoints = new Map([
     ["a", 1],
