@@ -84,6 +84,7 @@ function SpellcastSolver() {
         setAnalyzing(true)
         const resMap = await bestWord(bd, numSwap, setProgress, 1000)
         setResultMap(resMap)
+        setResult(null)
         setProgress(100)
         setAnalyzing(false)
     }
