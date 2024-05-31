@@ -236,7 +236,7 @@ export default class MenuBuilder {
       maximizable: false,
       minimizable: false,
       fullscreenable: false,
-      modal: true,
+      modal: false,
       title: "About This App",
       parent: this.mainWindow
     })
