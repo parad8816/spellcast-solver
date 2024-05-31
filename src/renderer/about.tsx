@@ -22,7 +22,7 @@ function About(props: { theme: Theme }) {
                     <GithubOutlined />
                 </Link>
             </Typography>
-            <Typography className="info">Version 1.0.1</Typography>
+            <Typography className="info">Version 1.1.0</Typography>
             <Typography className="info">by Tonal1ty</Typography>
             <Row align={"stretch"} justify={"space-between"} style={{ marginTop: 16 }}>
                 <Col flex={"320px"}>

@@ -260,12 +260,6 @@ export default class MenuBuilder {
           this.mainWindow.webContents.send("change-theme", "Dark");
         },
       },
-      {
-        label: 'Dark',
-        click: () => {
-          this.mainWindow.webContents.send("change-theme", "Oceanic");
-        },
-      },
     ]
   } 
 }
