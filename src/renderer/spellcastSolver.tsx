@@ -42,6 +42,7 @@ function SpellcastSolver() {
 
     const handleResetDlIndex = () => {
         keepFocus()
+        setDlIndex(null)
         setDlIndexVisible(false)
     }
 
@@ -53,6 +54,7 @@ function SpellcastSolver() {
 
     const handleResetTlIndex = () => {
         keepFocus()
+        setTlIndex(null)
         setTlIndexVisible(false)
     }
 
@@ -64,6 +66,7 @@ function SpellcastSolver() {
 
     const handleResetDwIndex = () => {
         keepFocus()
+        setDwIndex(null)
         setDwIndexVisible(false)
     }
 
