@@ -97,7 +97,6 @@
   },
   "dependencies": {
     "@ant-design/icons": "^5.3.7",
-    "@koale/useworker": "^4.0.2",
     "antd": "^5.17.3",
     "electron-debug": "^3.2.0",
     "electron-log": "^4.4.8",

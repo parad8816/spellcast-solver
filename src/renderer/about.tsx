@@ -15,14 +15,14 @@ function About(props: { theme: Theme }) {
                 className="title"
             >
                 SpellCast Solver <Link
-                    style={{ color: theme.isDark ? "white" : "black", fontSize: 20 }}
+                    style={{ color: theme.colorText ?? (theme.isDark ? "white" : "black"), fontSize: 20 }}
                     target="_blank" 
                     href="https://github.com/parad8816/spellcast-solver"
                 >
                     <GithubOutlined />
                 </Link>
             </Typography>
-            <Typography className="info">Version 1.1.0</Typography>
+            <Typography className="info">Version 1.2.0</Typography>
             <Typography className="info">by Tonal1ty</Typography>
             <Row align={"stretch"} justify={"space-between"} style={{ marginTop: 16 }}>
                 <Col flex={"320px"}>
@@ -40,7 +40,7 @@ function About(props: { theme: Theme }) {
                         お友達との対戦では使わないようにしましょう！
                         本アプリの使用によって生じたいかなる人間関係への亀裂も、私は一切責任を負いかねますことをご承知おきください。
                     </Typography>
-                    <Divider style={{ background: "#bbbbbb", marginTop: 10, marginBottom: 10 }} />
+                    <Divider style={{ marginTop: 10, marginBottom: 10, background: theme.colorDivider }} />
                     <Typography className="text">
                         このアプリは <Link 
                             className="text" 

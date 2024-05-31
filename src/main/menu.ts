@@ -14,9 +14,11 @@ interface DarwinMenuItemConstructorOptions extends MenuItemConstructorOptions {
 
 export default class MenuBuilder {
   mainWindow: BrowserWindow;
+  private aboutOpen: boolean;
 
   constructor(mainWindow: BrowserWindow) {
     this.mainWindow = mainWindow;
+    this.aboutOpen = false;
   }
 
   buildMenu(): Menu {
@@ -227,6 +229,11 @@ export default class MenuBuilder {
   }
 
   showAboutModal() {
+    if (this.aboutOpen) {
+      return
+    }
+    this.aboutOpen = true
+
     let window: BrowserWindow | null = null
     window = new BrowserWindow({
       show: false,
@@ -236,7 +243,7 @@ export default class MenuBuilder {
       maximizable: false,
       minimizable: false,
       fullscreenable: false,
-      modal: false,
+      modal: process.platform !== "darwin",
       title: "About This App",
       parent: this.mainWindow
     })
@@ -244,6 +251,10 @@ export default class MenuBuilder {
     window.loadURL(resolveHtmlPath("index.html", "about"))
     setMainIconToWindow(window)
     applyBasicSettingsToWindow(window)
+
+    window.on("close", () => {
+      this.aboutOpen = false
+    })
   }
 
   themeSubMenu() {
@@ -258,6 +269,60 @@ export default class MenuBuilder {
         label: 'Dark',
         click: () => {
           this.mainWindow.webContents.send("change-theme", "Dark");
+        },
+      },
+      {
+        label: 'Oceanic',
+        click: () => {
+          this.mainWindow.webContents.send("change-theme", "Oceanic");
+        },
+      },
+      {
+        label: 'Dynamic',
+        click: () => {
+          this.mainWindow.webContents.send("change-theme", "Dynamic");
+        },
+      },
+      {
+        label: 'Cyber',
+        click: () => {
+          this.mainWindow.webContents.send("change-theme", "Cyber");
+        },
+      },
+      {
+        label: 'Candy',
+        click: () => {
+          this.mainWindow.webContents.send("change-theme", "Candy");
+        },
+      },
+      {
+        label: 'Red Blue',
+        click: () => {
+          this.mainWindow.webContents.send("change-theme", "Red Blue");
+        },
+      },
+      {
+        label: 'Sky',
+        click: () => {
+          this.mainWindow.webContents.send("change-theme", "Sky");
+        },
+      },
+      {
+        label: 'Pink',
+        click: () => {
+          this.mainWindow.webContents.send("change-theme", "Pink");
+        },
+      },
+      {
+        label: 'Stardust',
+        click: () => {
+          this.mainWindow.webContents.send("change-theme", "Stardust");
+        },
+      },
+      {
+        label: 'Fade',
+        click: () => {
+          this.mainWindow.webContents.send("change-theme", "Fade");
         },
       },
     ]
