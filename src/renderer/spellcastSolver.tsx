@@ -2,8 +2,10 @@ import React, { RefObject, useEffect, useRef, useState } from "react";
 import { Button, Col, Divider, Input, InputRef, Row, Select, Spin, Typography } from "antd";
 import { WordResult, WordResultMap, bestWord } from "../main/spellcast";
 import { BoardUtil } from "../main/board";
+import { Theme } from "../main/themes";
 
-function SpellcastSolver() {
+function SpellcastSolver(props: { theme: Theme }) {
+    const {theme} = props
     const boardUtil = new BoardUtil(5, 5)
     const initMap: Map<number, string> = new Map()
     const refMap: Map<number, RefObject<InputRef>> = new Map()
@@ -128,7 +130,7 @@ function SpellcastSolver() {
         return (
             <span style={{ position: "relative" }}>
                 <Input
-                    style={result != null && result.path.includes(index) ? { background: "#FFF499" } : {}}
+                    style={result != null && result.path.includes(index) ? { background: theme.boardPathColor } : {}}
                     className="letter-input"
                     maxLength={1}
                     tabIndex={index}

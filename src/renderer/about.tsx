@@ -1,16 +1,21 @@
 import { Col, Divider, Image, Row, Typography } from "antd"
 import authorImg from "./author.png"
+import authorImgLighten from "./author_lighten.png"
 import { GithubOutlined } from "@ant-design/icons"
+import { Theme } from "../main/themes"
 const { Link } = Typography
 
-function About() {
+function About(props: { theme: Theme }) {
+    const {theme} = props
+    const auImg = theme.isDark ? authorImgLighten : authorImg
+
     return (
         <div id="about">
             <Typography 
                 className="title"
             >
                 SpellCast Solver <Link
-                    style={{ color: "black", fontSize: 20 }}
+                    style={{ color: theme.isDark ? "white" : "black", fontSize: 20 }}
                     target="_blank" 
                     href="https://github.com/parad8816/spellcast-solver"
                 >
@@ -59,7 +64,12 @@ function About() {
                     </Typography>
                 </Col>
                 <Col flex={"200px"} className="author-container">
-                    <Image width={150} src={authorImg} preview={false} style={{ marginTop: 16 }} />
+                    <Image 
+                        width={150} 
+                        src={auImg} 
+                        preview={false} 
+                        style={{ marginTop: 16 }} 
+                    />
                     <Typography className="text" style={{ marginTop: 10 }}>作者の図</Typography>
                 </Col>
             </Row>

@@ -102,6 +102,19 @@ export default class MenuBuilder {
             this.mainWindow.webContents.toggleDevTools();
           },
         },
+        {
+          label: 'Themes',
+          submenu: this.themeSubMenu(),
+        },
+      ],
+    };
+    const subMenuViewProd: MenuItemConstructorOptions = {
+      label: 'View',
+      submenu: [
+        {
+          label: 'Themes',
+          submenu: this.themeSubMenu(),
+        },
       ],
     };
     const subMenuWindow: DarwinMenuItemConstructorOptions = {
@@ -135,13 +148,12 @@ export default class MenuBuilder {
       ],
     };
 
-    const templateDarwin = 
+    const subMenuView = 
       process.env.NODE_ENV === 'development' ||
       process.env.DEBUG_PROD === 'true'
-        ? [subMenuAbout, subMenuViewDev, subMenuWindow, subMenuHelp]
-        : [subMenuAbout, subMenuWindow, subMenuHelp];
-
-    return templateDarwin;
+        ? subMenuViewDev
+        : subMenuViewProd
+    return [subMenuAbout, subMenuView, subMenuWindow, subMenuHelp]
   }
 
   buildDefaultTemplate() {
@@ -174,6 +186,19 @@ export default class MenuBuilder {
             this.mainWindow.webContents.toggleDevTools();
           },
         },
+        {
+          label: 'Themes',
+          submenu: this.themeSubMenu()
+        },
+      ]
+    }
+    const menuViewProd = {
+      label: '&View',
+      submenu: [
+        {
+          label: 'Themes',
+          submenu: this.themeSubMenu()
+        },
       ]
     }
     const menuHelp = {
@@ -193,13 +218,12 @@ export default class MenuBuilder {
         },
       ],
     }
-    const templateDefault = 
+    const menuView = 
       process.env.NODE_ENV === 'development' ||
       process.env.DEBUG_PROD === 'true'
-        ? [menuFile, menuViewDev, menuHelp]
-        : [menuFile, menuHelp];
-
-    return templateDefault;
+        ? menuViewDev
+        : menuViewProd
+    return [menuFile, menuView, menuHelp]
   }
 
   showAboutModal() {
@@ -221,4 +245,27 @@ export default class MenuBuilder {
     setMainIconToWindow(window)
     applyBasicSettingsToWindow(window)
   }
+
+  themeSubMenu() {
+    return [
+      {
+        label: 'Light',
+        click: () => {
+          this.mainWindow.webContents.send("change-theme", "Light");
+        },
+      },
+      {
+        label: 'Dark',
+        click: () => {
+          this.mainWindow.webContents.send("change-theme", "Dark");
+        },
+      },
+      {
+        label: 'Dark',
+        click: () => {
+          this.mainWindow.webContents.send("change-theme", "Oceanic");
+        },
+      },
+    ]
+  } 
 }
