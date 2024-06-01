@@ -50,10 +50,10 @@ export default function App() {
                     token: colorConfig(appTheme)
                 }}
             >
-            <Routes>
-                <Route path="/" element={<SpellcastSolver theme={appTheme} />} />
-                <Route path="/about" element={<About theme={appTheme} />} />
-            </Routes>
+                <Routes>
+                    <Route path="/" element={<SpellcastSolver theme={appTheme} />} />
+                    <Route path="/about" element={<About theme={appTheme} />} />
+                </Routes>
             </ConfigProvider>
         </HashRouter>
     );

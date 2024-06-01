@@ -1,3 +1,6 @@
+const lightBackgroundColor = "#E6E6E6"
+const darkBackgroundColor = "#282828"
+
 type Theme = {
     name: string,
     backgroundColor: string,
@@ -14,14 +17,14 @@ type Theme = {
 const allThemes: Theme[] = [
     {
         name: "Light",
-        backgroundColor: "#E6E6E6",
+        backgroundColor: lightBackgroundColor,
         isDark: false,
         boardPathColor: "#FFF499",
         colorDivider: "#B4B4B4",
     },
     {
         name: "Dark",
-        backgroundColor: "#282828",
+        backgroundColor: darkBackgroundColor,
         isDark: true,
         boardPathColor: "#75D144",
         colorDivider: "#464646",
@@ -38,7 +41,7 @@ const allThemes: Theme[] = [
     },
     {
         name: "Dynamic",
-        backgroundColor: "#282828",
+        backgroundColor: darkBackgroundColor,
         isDark: true,
         boardPathColor: "#2053FF",
         colorDivider: "#464646",
@@ -93,7 +96,7 @@ const allThemes: Theme[] = [
     },
     {
         name: "Pink",
-        backgroundColor: "#282828",
+        backgroundColor: darkBackgroundColor,
         isDark: true,
         boardPathColor: "#F967BD",
         colorDivider: "#464646",
@@ -135,4 +138,6 @@ export {
     Theme, 
     allThemes,
     defaultTheme,
+    lightBackgroundColor,
+    darkBackgroundColor,
 }
