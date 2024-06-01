@@ -369,7 +369,7 @@ function SpellcastSolver(props: { theme: Theme }) {
     return (
         <Row id='solver'>
             <Col flex={2}>{board}</Col>
-            <Divider type='vertical' style={{ height: 300, background: theme.colorDivider }} />
+            <Divider type='vertical' style={{ height: 300, borderLeft: `1px solid ${theme.colorDivider}` }} />
             <Col flex={2}>{boardResult}</Col>
         </Row>
     )

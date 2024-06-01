@@ -10,12 +10,14 @@ const colorConfig = (thm: Theme) => {
     const map = new Map<string, string>()
     const {
         colorPrimary,
+        colorPrimaryBg,
         colorBgContainer,
         colorBorder,
         colorLink,
         colorText,
     } = thm
     if (colorPrimary) map.set("colorPrimary", colorPrimary)
+    if (colorPrimaryBg) map.set("colorPrimaryBg", colorPrimaryBg)
     if (colorBgContainer) map.set("colorBgContainer", colorBgContainer)
     if (colorBorder) map.set("colorBorder", colorBorder)
     if (colorLink) map.set("colorLink", colorLink)
@@ -47,7 +49,7 @@ export default function App() {
             <ConfigProvider 
                 theme={{
                     algorithm: appTheme.isDark ? theme.darkAlgorithm : theme.defaultAlgorithm,
-                    token: colorConfig(appTheme)
+                    token: colorConfig(appTheme),
                 }}
             >
                 <Routes>
